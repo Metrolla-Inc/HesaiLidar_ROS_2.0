@@ -247,6 +247,22 @@ if($ENV{ROS_VERSION} MATCHES "1")
           RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
           LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
           ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION})
+  
+  install(TARGETS
+          source_lib
+          container_lib
+          ptcClient_lib
+          ptcParser_lib
+          serialClient_lib
+          log_lib
+          platutils_lib
+          DESTINATION lib)
+  
+  install(DIRECTORY
+          launch
+          rviz
+          config
+          DESTINATION share/${PROJECT_NAME})
 endif($ENV{ROS_VERSION} MATCHES "1")
 
 
@@ -281,6 +297,7 @@ if($ENV{ROS_VERSION} MATCHES "2")
   install(DIRECTORY
     launch
     rviz
+    config
     DESTINATION share/${PROJECT_NAME})
     
 
