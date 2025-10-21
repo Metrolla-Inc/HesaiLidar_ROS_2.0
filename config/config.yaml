@@ -1,17 +1,17 @@
 lidar:
   - driver:
       use_gpu: false
-      source_type: 1                                  # The type of data source, 1: real-time lidar connection, 2: pcap, 3: packet rosbag, 4: serial    
+      source_type: 1                                  # The type of data source, 1: real-time lidar connection, 2: pcap, 3: packet rosbag, 4: serial
       # Depending on the type of source_type, fill in the corresponding configuration block (lidar_udp_type, pcap_type, serial_type)
       lidar_udp_type:
         device_ip_address: 192.168.1.201              # host_ip_address. If empty(""), the source ip of the udp point cloud is used
         udp_port: 2368                                # UDP destination port
         ptc_port: 9347                                # PTC port of lidar
-        multicast_ip_address: 255.255.255.255
+        multicast_ip_address:
 
         use_ptc_connected: true                       # Set to false when ptc connection is not used
-        correction_file_path: "Your correction file path"   # The path of correction file
-        firetimes_path: "Your firetime file path"           # The path of firetimes file
+        correction_file_path: ""  # /home/metrolla/hesai_ws/JT16.csv   # The path of correction file
+        firetimes_path: "" # /home/metrolla/jt16_ws/src/HesaiLidar_ROS_2.0/JT128F.csv           # The path of firetimes file
 
         use_someip: false
         host_ip_address: ""
@@ -38,11 +38,11 @@ lidar:
         firetimes_path: "Your firetime file path"           # The path of firetimes file
 
       serial_type:
-        rs485_com: "Your serial port name for receiving point cloud"  # if using JT16, Port to receive the point cloud
-        rs232_com: "Your serial port name for sending cmd"            # if using JT16, Port to send cmd
+        rs485_com: "/dev/ttyUSB0"  # if using JT16, Port to receive the point cloud
+        # rs232_com: /dev/ttyUSB0 "Your serial port name for sending cmd"            # if using JT16, Port to send cmd
         point_cloud_baudrate: 3125000
         correction_save_path: ""                                      # turn on when you need to store angle calibration files(from lidar)
-        correction_file_path: "Your correction file path"             # The path of correction file
+        correction_file_path: "/home/metrolla/hesai_ws/JT16.csv"             # The path of correction file
       
       # public module
       use_timestamp_type: 0                 # 0 use point cloud timestamp; 1 use receive timestamp
@@ -52,7 +52,7 @@ lidar:
       x: 0
       y: 0
       z: 0
-      roll: 0
+      roll: 180
       pitch: 0
       yaw: 0
       #fov config, [fov_start, fov_end] range [1, 359], [-1, -1]means use default
@@ -75,6 +75,6 @@ lidar:
       # ros_send_correction_topic: /lidar_corrections # Topic used to send correction through ROS
       # ros_send_firetime_topic: /lidar_firetime
       # ros_send_ptp_topic: /lidar_ptp                # Topic used to send PTP lock status, offset through ROS
-      send_packet_ros: false                          # true: Send packets through ROS 
+      send_packet_ros: true                          # true: Send packets through ROS 
       send_point_cloud_ros: true                      # true: Send point cloud through ROS    
       send_imu_ros: true                              # true: Send imu through ROS    
