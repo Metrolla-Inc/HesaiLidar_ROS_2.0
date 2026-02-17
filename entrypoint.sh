@@ -35,4 +35,7 @@ if [ -f /hesai_ws/install/setup.bash ]; then
     source /hesai_ws/install/setup.bash
 fi
 
+# Add library path for shared objects
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/hesai_ws/install/hesai_ros_driver/lib
+
 exec "$@"
