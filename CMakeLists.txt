@@ -181,6 +181,11 @@ set(LIB_TARGETS
     hesai_sdk_lib
     log_lib
     lidar_lib
+    udpParser_lib
+    ptcClient_lib
+    source_lib
+    serialClient_lib
+    platutils_lib
     )
 
 if(${CUDA_FOUND})
