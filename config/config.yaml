@@ -40,12 +40,11 @@ lidar:
         firetimes_path: "Your firetime file path"           # The path of firetimes file
 
       serial_type:
-        rs485_com: "Your serial port name for receiving point cloud"  # if using JT16, Port to receive the point cloud
-        rs232_com: "Your serial port name for sending cmd"            # if using JT16, Port to send cmd
+        rs485_com: "/dev/ttyUSB0"  # if using JT16, Port to receive the point cloud
+        # rs232_com: /dev/ttyUSB0 "Your serial port name for sending cmd"            # if using JT16, Port to send cmd
         point_cloud_baudrate: 3125000
         correction_save_path: ""                                      # turn on when you need to store angle calibration files(from lidar)
         correction_file_path: "Your correction file path"             # The path of correction file
-
       # public module
       use_timestamp_type: 0                 # 0 use point cloud timestamp; 1 use receive timestamp
       frame_start_azimuth: 0                # Frame azimuth for Pandar128, range from 1 to 359, set it less than 0 if you do not want to use it
@@ -56,7 +55,7 @@ lidar:
       x: 0
       y: 0
       z: 0
-      roll: 0
+      roll: 180
       pitch: 0
       yaw: 0
       # fov config, [fov_start, fov_end] range [1, 359], [-1, -1]means use default
