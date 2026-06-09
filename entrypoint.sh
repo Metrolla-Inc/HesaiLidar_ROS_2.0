@@ -27,6 +27,14 @@ if [ ! -f "$CONFIG_PATH" ] || [ "$OVERWRITE_CONFIG" = "true" ]; then
     sed -i "s/device_ip_address: .*/device_ip_address: $DEVICE_IP/g" "$CONFIG_PATH"
     sed -i "s/udp_port: .*/udp_port: $UDP_PORT/g" "$CONFIG_PATH"
     sed -i "s/host_ip_address: .*/host_ip_address: \"$HOST_IP\"/g" "$CONFIG_PATH"
+
+    # Apply topic name overrides if set
+    [ -n "$POINT_CLOUD_TOPIC" ] && sed -i "s|ros_send_point_cloud_topic: .*|ros_send_point_cloud_topic: $POINT_CLOUD_TOPIC|g" "$CONFIG_PATH"
+    [ -n "$PACKET_TOPIC" ] && sed -i "s|ros_send_packet_topic: .*|ros_send_packet_topic: $PACKET_TOPIC|g" "$CONFIG_PATH"
+    [ -n "$PACKET_TOPIC" ] && sed -i "s|ros_recv_packet_topic: .*|ros_recv_packet_topic: $PACKET_TOPIC|g" "$CONFIG_PATH"
+    [ -n "$IMU_TOPIC" ] && sed -i "s|ros_send_imu_topic: .*|ros_send_imu_topic: $IMU_TOPIC|g" "$CONFIG_PATH"
+    [ -n "$PACKET_LOSS_TOPIC" ] && sed -i "s|ros_send_packet_loss_topic: .*|ros_send_packet_loss_topic: $PACKET_LOSS_TOPIC|g" "$CONFIG_PATH"
+    [ -n "$FRAME_ID" ] && sed -i "s|ros_frame_id: .*|ros_frame_id: $FRAME_ID|g" "$CONFIG_PATH"
 fi
 
 # Source ROS2 and workspace
