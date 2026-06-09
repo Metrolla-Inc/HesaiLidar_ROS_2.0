@@ -125,6 +125,29 @@ inline void SourceDriver::Init(const YAML::Node& config)
   frame_id_ = driver_param.input_param.frame_id;
 
   node_ptr_.reset(new rclcpp::Node("hesai_ros_driver_node"));
+
+  // Declare ROS parameters for topic names and frame_id, allowing inline overrides
+  // e.g.: ros2 launch hesai_ros_driver start.py frame_id:=front_lidar point_cloud_topic:=/front/lidar_points
+  {
+    std::string param_val;
+    param_val = node_ptr_->declare_parameter<std::string>("frame_id", "");
+    if (!param_val.empty()) {
+      driver_param.input_param.frame_id = param_val;
+      frame_id_ = param_val;
+    }
+    param_val = node_ptr_->declare_parameter<std::string>("point_cloud_topic", "");
+    if (!param_val.empty()) driver_param.input_param.ros_send_point_topic = param_val;
+    param_val = node_ptr_->declare_parameter<std::string>("packet_topic", "");
+    if (!param_val.empty()) {
+      driver_param.input_param.ros_send_packet_topic = param_val;
+      driver_param.input_param.ros_recv_packet_topic = param_val;
+    }
+    param_val = node_ptr_->declare_parameter<std::string>("imu_topic", "");
+    if (!param_val.empty()) driver_param.input_param.ros_send_imu_topic = param_val;
+    param_val = node_ptr_->declare_parameter<std::string>("packet_loss_topic", "");
+    if (!param_val.empty()) driver_param.input_param.ros_send_packet_loss_topic = param_val;
+  }
+
   if (driver_param.input_param.send_point_cloud_ros) {
     pub_ = node_ptr_->create_publisher<sensor_msgs::msg::PointCloud2>(driver_param.input_param.ros_send_point_topic, 10);
   }
