@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 cmake_policy(SET CMP0048 NEW)
 project(hesai_ros_driver)
 
+# Ensure that the install tree has the correct RPATH
+set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 #=======================================
 # Version information
 #=======================================
@@ -177,6 +181,11 @@ set(LIB_TARGETS
     hesai_sdk_lib
     log_lib
     lidar_lib
+    udpParser_lib
+    ptcClient_lib
+    source_lib
+    serialClient_lib
+    platutils_lib
     )
 
 if(${CUDA_FOUND})
@@ -250,6 +259,7 @@ endif()
   install(DIRECTORY
           launch
           rviz
+          config
           DESTINATION share/${PROJECT_NAME})
 
   ament_package()

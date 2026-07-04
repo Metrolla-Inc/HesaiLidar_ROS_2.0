@@ -74,14 +74,13 @@ lidar:
         device_ip_address: 192.168.1.201              # host_ip_address. If empty(""), the source ip of the udp point cloud is used
         udp_port: 2368                                # UDP destination port
         ptc_port: 9347                                # PTC port of lidar
-        multicast_ip_address: 255.255.255.255
 
         use_ptc_connected: true                       # Set to false when ptc connection is not used
         correction_file_path: "Your correction file path"   # The path of correction file
         firetimes_path: "Your firetime file path"           # The path of firetimes file
 
         use_someip: false
-        host_ip_address: ""
+        host_ip_address: "192.168.1.100"
         fault_message_port: 0
 
         standby_mode: -1                              # The standby mode: [-1] is invalit [0] in operation [1] standby
@@ -143,6 +142,12 @@ lidar:
       send_imu_ros: true                              # true: Send imu through ROS    
 ```
 
+## Docker Deployment and Model Selection
+
+The Docker image for this driver supports dynamic configuration via environment variables, making it easy to deploy for different Lidar models without manually editing configuration files.
+
+For detailed information on Docker deployment, model mapping (e.g., selecting `AT128E2X` for an **AT128P** sensor), and Balena Compose examples, please refer to the [DOCKER_README.md](./DOCKER_README.md).
+
 
 ### Real time playback
 
@@ -186,14 +191,13 @@ lidar:
         device_ip_address: 192.168.1.201              # host_ip_address. If empty(""), the source ip of the udp point cloud is used
         udp_port: 2368                                # UDP destination port
         ptc_port: 9347                                # PTC port of lidar
-        multicast_ip_address: 255.255.255.255
 
         use_ptc_connected: true                       # Set to false when ptc connection is not used
         correction_file_path: "Your correction file path"   # The path of correction file
         firetimes_path: "Your firetime file path"           # The path of firetimes file
 
         use_someip: false
-        host_ip_address: ""
+        host_ip_address: "192.168.1.100"
         fault_message_port: 0
 
         standby_mode: -1                              # The standby mode: [-1] is invalit [0] in operation [1] standby
@@ -261,14 +265,13 @@ lidar:
         device_ip_address: 192.168.1.202              # host_ip_address. If empty(""), the source ip of the udp point cloud is used
         udp_port: 2369                                # UDP destination port
         ptc_port: 9347                                # PTC port of lidar
-        multicast_ip_address: 255.255.255.255
 
         use_ptc_connected: true                       # Set to false when ptc connection is not used
         correction_file_path: "Your correction file path"   # The path of correction file
         firetimes_path: "Your firetime file path"           # The path of firetimes file
 
         use_someip: false
-        host_ip_address: ""
+        host_ip_address: "192.168.1.100"
         fault_message_port: 0
 
         standby_mode: -1                              # The standby mode: [-1] is invalit [0] in operation [1] standby
