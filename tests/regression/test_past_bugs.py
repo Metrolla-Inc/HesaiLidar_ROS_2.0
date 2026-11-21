@@ -117,3 +117,14 @@ def test_bug3_a_missing_firetime_file_fails_loudly(monkeypatch, tmp_path, capsys
                               "SENSOR_IP": "192.168.1.201"}) == 1
     err = capsys.readouterr().err
     assert "PandarXT-32_Firetime Correction File.csv" in err and "is not in this image" in err
+
+
+def test_bug4_sigterm_stops_the_node_cleanly():
+    """Found by the first CI smoke of C9 (PR 8): `docker stop` had to SIGKILL the contract-mode
+    node (exit 137). The vendor node bound only SIGINT to the handler that ends its main loop;
+    rclcpp's own SIGTERM handler never sets that flag, and as PID 1 in a container SIGTERM's
+    default action is ignored, so the node kept running. SIGTERM is now bound to the same
+    handler, before rclcpp::init (which chains to it)."""
+    src = (Path(__file__).resolve().parents[2] / "node" / "hesai_ros_driver_node.cc").read_text()
+    term = src.index("signal(SIGTERM, sigHandler);")
+    assert src.index("signal(SIGINT, sigHandler);") < term < src.index("rclcpp::init(argc, argv);")
