@@ -59,6 +59,7 @@ int main(int argc, char** argv)
 {
   std::cout << "-------- Hesai Lidar ROS V" << VERSION_MAJOR << "." << VERSION_MINOR << "." << VERSION_TINY << " --------" << std::endl;
   signal(SIGINT, sigHandler);  ///< bind ctrl+c signal with the sigHandler function
+  signal(SIGTERM, sigHandler);  ///< docker stop: as PID 1 in a container SIGTERM is otherwise ignored
 #ifdef ROS_FOUND
   ros::init(argc, argv, "hesai_ros_driver_node", ros::init_options::NoSigintHandler);
 #elif ROS2_FOUND
