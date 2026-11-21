@@ -51,7 +51,7 @@ and user (root) of the image are unchanged.
   false`, calibration from the sensor over PTC, **no firetime file**), whatever `LIDAR_MODEL`,
   `SENSOR_IP`, `SENSOR_PORT`, `HOST_IP`, `FRAME_ID` or `POINT_CLOUD_TOPIC` say. Only the
   `start.py` launch arguments (`frame_id:=` ...) reach the node. Verified by reading the code, by
-  the string `/hesai_ws/src` compiled into a local build, and by `tests/legacy`.
+  `strings` on a local build (its source directory is compiled in), and by `tests/legacy`.
 - The fleets work because their values equal `config.yaml`'s (mirasys-dev: `192.168.1.201`,
   2368, `hesai_lidar`, `/lidar_points`). A JT128 unit set to `LIDAR_MODEL=JT128` also runs
   `config.yaml`, not `JT128.yaml`.
