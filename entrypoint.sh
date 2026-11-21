@@ -1,4 +1,11 @@
 #!/bin/bash
+# Metrolla driver contract, opt-in (AGENTS.md). Only when METROLLA_DRIVER_CONTRACT is set and not
+# "0" does the image switch to the environment contract; otherwise everything below this block is
+# the v1.0.5 entrypoint, byte for byte (tests/legacy pins it).
+if [ -n "${METROLLA_DRIVER_CONTRACT:-}" ] && [ "${METROLLA_DRIVER_CONTRACT}" != "0" ]; then
+    exec /opt/metrolla/hesai/contract-entrypoint.sh "$@"
+fi
+# --- end of the Metrolla contract block; the v1.0.5 entrypoint follows ---
 set -e
 
 # Default values

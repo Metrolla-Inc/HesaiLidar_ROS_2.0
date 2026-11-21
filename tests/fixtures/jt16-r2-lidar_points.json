@@ -1,0 +1,24 @@
+{
+  "what": "Two consecutive /lidar_points messages (sensor_msgs/msg/PointCloud2, ROS 2 CDR, as stored in the bag) cut from a real Hesai JT16 recording",
+  "source": "Metrolla-Inc/HesaiDriver main, HesaiLidar_ROS_2.0/jt16-r2/jt16-r2_0.mcap (rosbag2 MCAP, recorded 2025-08-23, 168 clouds, 33.8 s)",
+  "source_sha256": "93cd7f73ecc7b4a72ec92f0eff74c92be5be38488863749b63a54f00ebf46aec",
+  "topic": "/lidar_points",
+  "type": "sensor_msgs/msg/PointCloud2",
+  "messages": [
+    {
+      "message_index": 10,
+      "log_time_ns": 1755963901517404838,
+      "offset": 0,
+      "bytes": 249381,
+      "sha256": "3a569b64baac2c075503fe2647f391910292d24ca74b7bde6170a1e2ab320c0d"
+    },
+    {
+      "message_index": 11,
+      "log_time_ns": 1755963901718006459,
+      "offset": 249381,
+      "bytes": 249381,
+      "sha256": "30ccfd45e9459867248c8077ac89cf364e305603d576d0d895b8585f56314126"
+    }
+  ],
+  "note": "The bag holds decoded clouds and IMU only, no raw packets, so it cannot be replayed into the driver; it pins the PointCloud2 layout the Hesai driver published on a real sensor."
+}

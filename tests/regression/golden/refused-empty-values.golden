@@ -1,0 +1,7 @@
+exit 1
+--- stdout
+--- stderr
+hesai-driver: refusing to start: LIDAR_MODEL is set but empty; accepted: a Hesai model name such as pandarxt-32 (or xt32), jt128 or at128e2x (the full list is in the message when the name is unknown)
+hesai-driver: refusing to start: SENSOR_IP is set but empty; accepted: the sensor's own IPv4 address, for example 192.168.1.201
+hesai-driver: refusing to start: DATA_PORT is set but empty; accepted: a UDP port 1024-65535 (default 2368), or unset it for the default
+hesai-driver: refusing to start: FRAME_ID is set but empty; accepted: letters, digits and '_', not starting with a digit (default hesai_lidar), or unset it for the default
