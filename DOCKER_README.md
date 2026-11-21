@@ -108,3 +108,18 @@ If you need to use a totally custom configuration file, you can map it as a volu
     environment:
       - CONFIG_PATH=/hesai_ws/custom_config.yaml
 ```
+
+#### Environment contract (opt-in, `METROLLA_DRIVER_CONTRACT=1`)
+Everything above is the **legacy mode**, unchanged for the existing fleets. Note that in legacy
+mode the node reads `/hesai_ws/src/config/config.yaml`, not the file `OVERWRITE_CONFIG` renders
+(see `AGENTS.md`, "Legacy mode"), so `LIDAR_MODEL`, `SENSOR_IP`, `SENSOR_PORT`, `HOST_IP`,
+`FRAME_ID` and `POINT_CLOUD_TOPIC` do not reach the driver; only the launch arguments do.
+
+With `METROLLA_DRIVER_CONTRACT=1` the image follows the environment contract shared with the other
+Metrolla driver images: `LIDAR_MODEL`, `SENSOR_IP` (required), `SENSOR_ID`, `DATA_PORT`,
+`DEVICE_PORT`, `HOST_IP`, `FRAME_ID`, `POINTCLOUD_TOPIC`, `TIME_MODE`, `HESAI_RUN_DIR`; it renders
+`config/<model>.yaml` to `/tmp/hesai/config.yaml`, gives that file to the node (`config_path`),
+refuses any value it does not understand (exit 1, one line per problem), and runs as any uid with a
+read-only root and a tmpfs on `/tmp`. `docker run --rm -e METROLLA_DRIVER_CONTRACT=1 -e
+LIDAR_MODEL=xt32 -e SENSOR_IP=192.168.1.201 ghcr.io/metrolla-inc/hesai_driver:<tag> check` prints
+what it would run. Full table: `AGENTS.md`.
