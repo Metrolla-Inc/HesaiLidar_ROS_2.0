@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "recorded": "2026-11-21",
+  "vendors": [
+    {
+      "id": "HesaiLidar_ROS_2.0",
+      "url": "https://github.com/HesaiTechnology/HesaiLidar_ROS_2.0.git",
+      "branch": "master",
+      "tags": [
+        "v*"
+      ],
+      "fork_ref": "master",
+      "base": {
+        "commit": "0f5a1be9babea453c74bd1a9ede1e64272e036da",
+        "how": "merge-base of fork master and vendor master on 2026-11-21; fleet tag v1.0.5 has the same tree as master and the same merge-base (see HesaiDriver docs/VENDOR_DIFF.md, C13)"
+      }
+    },
+    {
+      "id": "HesaiLidar_SDK_2.0",
+      "url": "https://github.com/HesaiTechnology/HesaiLidar_SDK_2.0.git",
+      "branch": "master",
+      "tags": [
+        "v*"
+      ],
+      "base": {
+        "submodule": "src/driver/HesaiLidar_SDK_2.0",
+        "how": "the submodule commit in the checked-out fork branch (bae81f2 on master on 2026-11-21)"
+      }
+    }
+  ],
+  "not_checked": []
+}
