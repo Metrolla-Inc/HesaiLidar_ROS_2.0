@@ -138,7 +138,8 @@ CONTRACT_ENV=(-e METROLLA_DRIVER_CONTRACT=1 -e LIDAR_MODEL=hesai-xt32 -e "SENSOR
               -e SENSOR_ID=east -e HOST_IP=192.168.1.100/24 -e FRAME_ID=hesai_east
               -e ROS_LOCALHOST_ONLY=1)
 RESTRICT=(--network host --ipc host --user 97000:97000 --read-only --tmpfs /tmp
-          --cap-drop ALL --security-opt no-new-privileges:true)
+          --cap-drop ALL --security-opt no-new-privileges:true
+          -e ROS_HOME=/tmp/ros -e ROS_LOG_DIR=/tmp/ros/log)
 sudo ip addr add "$SENSOR_IP/32" dev lo
 docker run -d --name "$NAME" "${RESTRICT[@]}" "${CONTRACT_ENV[@]}" "$IMAGE" > /dev/null
 sleep 3
