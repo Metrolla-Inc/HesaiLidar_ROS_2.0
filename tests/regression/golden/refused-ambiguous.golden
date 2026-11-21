@@ -1,0 +1,4 @@
+exit 1
+--- stdout
+--- stderr
+hesai-driver: refusing to start: LIDAR_MODEL='hesai-at128' is ambiguous: use at128e2x (AT128P, AT128E2X) or at128e3x

@@ -1,0 +1,6 @@
+exit 1
+--- stdout
+--- stderr
+hesai-driver: refusing to start: OVERWRITE_CONFIG is a legacy variable of this image and is not read with METROLLA_DRIVER_CONTRACT=1; the contract renders the configuration itself; remove it
+hesai-driver: refusing to start: POINT_CLOUD_TOPIC is a legacy variable of this image and is not read with METROLLA_DRIVER_CONTRACT=1; use POINTCLOUD_TOPIC
+hesai-driver: refusing to start: SENSOR_PORT is a legacy variable of this image and is not read with METROLLA_DRIVER_CONTRACT=1; use DATA_PORT

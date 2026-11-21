@@ -1,0 +1,4 @@
+exit 1
+--- stdout
+--- stderr
+hesai-driver: refusing to start: LIDAR_MODEL='hesai-jt16' is a serial (RS-485) sensor in this image (config/JT16.yaml source_type 4); this contract drives UDP sensors by SENSOR_IP only. Run it without METROLLA_DRIVER_CONTRACT (legacy mode)

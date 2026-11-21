@@ -1,0 +1,13 @@
+exit 1
+--- stdout
+--- stderr
+hesai-driver: refusing to start: SENSOR_IP='192.168.1.300' is not an IPv4 address; accepted: the sensor's own IPv4 address in dotted decimal without leading zeros, for example 192.168.1.201
+hesai-driver: refusing to start: SENSOR_ID='Dock-East' is not a sensor id; accepted: 1-31 characters, a lowercase letter then lowercase letters, digits or single '_' (it becomes the node's ROS namespace)
+hesai-driver: refusing to start: DATA_PORT='80' is not a usable port; accepted: a whole number 1024-65535 without leading zeros (the UDP port the sensor sends to, default 2368)
+hesai-driver: refusing to start: DEVICE_PORT='70000' is not a usable port; accepted: a whole number 1024-65535 without leading zeros (the sensor's PTC (TCP) port, default 9347)
+hesai-driver: refusing to start: FRAME_ID='9frame' is not a frame id; accepted: 1-64 characters, letters, digits and '_', not starting with a digit (default hesai_lidar)
+hesai-driver: refusing to start: POINTCLOUD_TOPIC='/a//b' is not a ROS topic name; accepted: '/'-separated tokens of letters, digits and single '_', each starting with a letter, absolute (/x) or relative to the SENSOR_ID namespace (default lidar_points)
+hesai-driver: refusing to start: TIME_MODE='utc' is not a time mode; accepted, any case: host (stamp with the host's receive time), sensor (the default), gps, ptp or ntp (stamp with the sensor's own time; the sensor must be synchronised that way, this image does not program it)
+hesai-driver: refusing to start: PUBLISH_SCAN='true' is not supported by this image; accepted: unset or false. The Hesai driver publishes PointCloud2 only
+hesai-driver: refusing to start: HESAI_RUN_DIR='relative/dir' is not an absolute directory path; accepted: an absolute path of letters, digits, '_', '.', '-' and '/' (default /tmp/hesai)
+hesai-driver: refusing to start: DUAL_LIDAR='true' is not supported with METROLLA_DRIVER_CONTRACT; accepted: unset or false. Run one container per Hesai sensor
