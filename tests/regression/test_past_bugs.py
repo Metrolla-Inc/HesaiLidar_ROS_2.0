@@ -37,7 +37,7 @@ def config_the_node_reads(argv: list[str]) -> str:
 
 
 def test_bug1_legacy_mechanism_is_as_documented():
-    env, argv = read_case(LEGACY / "cases" / "mirasys-dev-jt128.env")
+    env, argv = read_case(LEGACY / "cases" / "partner1-dev-jt128.env")
     record = run(REPO / "entrypoint.sh", env, argv)
     assert config_the_node_reads(record["exec"]["argv"]) == "/hesai_ws/src/config/config.yaml"
     assert "/hesai_ws/src/config/config.yaml" in record["files"]

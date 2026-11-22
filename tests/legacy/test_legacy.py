@@ -74,7 +74,7 @@ def test_legacy_render_is_not_what_the_node_reads():
     entrypoint renders into the install space, while the node reads the source copy
     (/hesai_ws/src/config/config.yaml, PROJECT_PATH) and start.py passes no config_path. Kept as
     it is for the fleets; the contract mode fixes it."""
-    env, argv = read_case(HERE / "cases" / "mirasys-dev-jt128.env")
+    env, argv = read_case(HERE / "cases" / "partner1-dev-jt128.env")
     record = run(CURRENT, env, argv)
     assert "JT128" in record["stdout"]
     assert record["live_config_yaml"] != record["node_reads_config_yaml"]
