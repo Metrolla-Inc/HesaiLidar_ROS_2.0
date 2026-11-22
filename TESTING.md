@@ -29,7 +29,7 @@ holds exit code, stdout, stderr, the exec'd argv, its environment, every file un
 with its hash, the rendered `config.yaml` and the `config.yaml` the node reads.
 
 `tests/legacy/cases/*.env` are the fleets' environments, taken from the balena-fleets compose files
-(mirasys-dev XT32 and JT128, flood_dev AT128E2X, mirasys-mirror, seattleU2 with the model unset),
+(partner1-dev XT32 and JT128, flood_dev AT128E2X, partner1-mirror, campus1 with the model unset),
 plus the switch at `0` and empty, the unknown-model fallback, and a command with launch
 arguments. The goldens were generated from `entrypoint-v1.0.5.sh` (the tag's blob
 `9aee44f`) **before** the contract was added (commit "Pin the legacy entrypoint"); the test runs
