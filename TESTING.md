@@ -6,7 +6,7 @@ image for amd64 and arm64 on every pull request, without pushing.
 
 | Tier | Job | What | Needs | Time |
 |---|---|---|---|---|
-| unit | `unit` | `tests/unit`: the environment contract (every accepted value, every refusal and its message, `run`/`check`/`selfcheck`), the contract against the C++ and CMake it relies on (`test_vendor_contract.py`, including the "node ignores the rendered config" mechanism), the synthetic XT32 against the SDK's protocol header, the recorded JT16 cloud layout; `tests/legacy`; shellcheck; hadolint | Python, pytest, pyyaml, the SDK submodule | seconds |
+| unit | `unit` | `tests/unit`: the environment contract (every accepted value, every refusal and its message, `run`/`check`/`selfcheck`), the contract against the C++ and CMake it relies on (`test_vendor_contract.py`, including the "node ignores the rendered config" mechanism), the synthetic XT32 against the SDK's protocol header, the recorded JT16 cloud layout; `sensor-tool` against a fake sensor (PTC and HTTP on loopback: reads send no write, every write needs `--driver-stopped`, never two PTC sessions, each outcome and exit code); `tests/legacy`; shellcheck; hadolint | Python, pytest, pyyaml, the SDK submodule | seconds |
 | regression | `regression` | `tests/legacy` (fleet environments → the v1.0.5 entrypoint's goldens), `tests/regression` (contract renders and refusal messages → goldens; past bugs) | Python, pytest, pyyaml, the SDK submodule | seconds |
 | smoke | `smoke` | build the image (amd64), `docker/smoke/smoke.sh`: legacy fleet environments in the real image, contract refusals, and a contract run with a synthetic PandarXT-32 | Docker, sudo (one loopback address) | ~20-40 min cold |
 

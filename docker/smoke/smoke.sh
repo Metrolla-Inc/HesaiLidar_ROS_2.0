@@ -10,6 +10,8 @@
 #   4. Contract run as the product does it (uid 97000, read-only root, tmpfs /tmp, cap-drop ALL,
 #      no-new-privileges, host network and IPC) with a synthetic PandarXT-32 (fake_xt32.py):
 #      PointCloud2 on /east/lidar_points, calibration and firetime files loaded, clean stop.
+#   5. sensor-tool is in the image and answers a usage error with its one JSON object, run with
+#      the host's own container options. No sensor is contacted.
 set -euo pipefail
 
 IMAGE=${1:?usage: smoke.sh IMAGE [OLD_IMAGE]}
@@ -176,6 +178,19 @@ fi
 docker stop -t 10 "$NAME" > /dev/null
 code=$(docker inspect -f '{{.State.ExitCode}}' "$NAME")
 expect "stopped by SIGTERM, not SIGKILL (exit $code)" test "$code" != 137
+
+# ---------------------------------------------------------------------------------------------
+echo "== 5. sensor-tool is in the image and answers as the host runs it"
+# The host's own options (metrolla-edge, sensor.program). A usage error contacts nothing: the
+# tool must still print its one JSON object and exit 1.
+tool_out=$(docker run --rm --network host --read-only --cap-drop ALL --security-opt no-new-privileges:true \
+    --user 65534:65534 --pids-limit 64 --memory 256m --tmpfs /tmp:size=8m --entrypoint sensor-tool "$IMAGE" probe) && tool_code=0 || tool_code=$?
+expect "sensor-tool exits 1 for a usage error (exit $tool_code)" test "$tool_code" = 1
+expect "sensor-tool prints one JSON object of interface 1: $tool_out" python3 -c '
+import json, sys
+answer = json.loads(sys.argv[1])
+assert (answer["sensor_tool"], answer["vendor"], answer["command"], answer["outcome"], answer["exit_code"]) == (1, "hesai", "probe", "refused", 1)
+' "$tool_out"
 
 if [[ $FAILED != 0 ]]; then
     echo "== driver log"; cat "$WORK/driver.log"
