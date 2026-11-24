@@ -45,6 +45,13 @@ RUN chmod 0755 /opt/metrolla/hesai/contract-entrypoint.sh \
     && chmod -R a+rX /opt/metrolla/hesai \
     && python3 -I /opt/metrolla/hesai/hesai_env.py selfcheck
 
+# sensor-tool (docker/sensor_tool.py): reads and sets the sensor's own address, destination and
+# clock source. The host runs it as its own container, `--entrypoint sensor-tool`, with this
+# sensor's driver stopped; the driver never runs it. Standard library Python, no ROS.
+COPY docker/sensor_tool.py /usr/local/bin/sensor-tool
+RUN chmod 0755 /usr/local/bin/sensor-tool \
+    && python3 -I -c "import ast; ast.parse(open('/usr/local/bin/sensor-tool').read())"
+
 # Set the entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
