@@ -8,7 +8,7 @@ sessions were opened (`ptc_sessions`) and how many were open at once (`max_open`
 Faults: `refuse` (code -> PTC return code), `live=False` (a new address is taken only at a
 restart), `deaf` (codes it acknowledges and does not take), `vanish` (after this code it answers
 nowhere), `no_ptp_config` (0x26 is refused), `http_dest=False` / `http_ptp=False` (lidar_config
-without the destination / without PTPConfig).
+without the destination / without PTPConfig), `http_clock=False` (without ClockSource).
 """
 
 from __future__ import annotations
@@ -41,6 +41,7 @@ class FakeHesai:
         self.live, self.deaf, self.vanish = faults.pop("live", True), tuple(faults.pop("deaf", ())), faults.pop("vanish", None)
         self.no_ptp_config = faults.pop("no_ptp_config", False)
         self.http_dest, self.http_ptp = faults.pop("http_dest", True), faults.pop("http_ptp", True)
+        self.http_clock = faults.pop("http_clock", True)
         assert not faults, faults
         self.codes, self.payloads, self.queries = [], {}, []
         self.ptc_sessions = self.open = self.max_open = 0
@@ -217,7 +218,9 @@ class FakeHesai:
         if query == "action=get&object=device_info":
             return {"Head": ok, "Body": {"SN": self.serial, "Mac": "EC:9F:0D:A1:28:01", "Model": "XT32M2X", "SW Ver": "2.1.7", "FW Ver": "2.0.11"}}
         if query == "action=get&object=lidar_config":
-            body = {"SpinSpeed": "600", "ClockSource": str(self.clock_source), "PTPStatus": "Free Run", "PTPProfile": str(self.profile)}
+            body = {"SpinSpeed": "600", "PTPStatus": "Free Run", "PTPProfile": str(self.profile)}
+            if self.http_clock:
+                body["ClockSource"] = str(self.clock_source)
             if self.http_ptp:
                 body["PTPConfig"] = {"Profile": self.profile, "Domain": self.domain, "Network": self.network,
                                      "LogAnnounceInterval": self.intervals[0], "LogSyncInterval": self.intervals[1],

@@ -335,6 +335,10 @@ PORT_STATE = {1: "initializing", 2: "faulty", 3: "disabled", 4: "listening", 5: 
 # Models whose 0x24 takes a reserved byte after the three intervals (nebula set_ptp_config, "is_new_gen"),
 # by the driver's configuration names. Used only when the sensor's own 0x26 answer does not show it.
 RESERVED_BYTE_MODELS = ("AT128", "QT128", "Pandar128", "OT128")
+# Models known to answer pandar.cgi, by the driver's configuration name (the fleet's XT32s; the
+# same list as metrolla-edge's sensor_program.HTTP_READ). Any other model is tried over HTTP first
+# too, and read over PTC when no web server answers.
+HTTP_MODELS = ("PandarXT-32",)
 INTERVALS = (1, 1, 0)  # announce, sync, minimum delay request (log2 s): nebula g_ptp_log_*; used when the sensor reports none
 
 
@@ -633,10 +637,15 @@ def public(state):
 
 def http_info(run: Run, ip: str):
     """device_info when the sensor has the HTTP interface and the run may use it, else None."""
+    known = run.args.model in HTTP_MODELS
     if run.args.channel == "ptc":
+        if known:
+            raise Stop("refused", f"a {run.args.model} is read over HTTP; --channel ptc is refused for it; nothing was sent")
         return None
     info = http_get(run, ip, "device_info")
-    if info is None and run.args.channel == "http":
+    if info is None and (known or run.args.channel == "http"):
+        # A model known to have the HTTP interface is never read over PTC instead: a web server
+        # that is slow for a moment must not cost an XT32 a PTC session it did not need.
         raise NoAnswer(f"no Hesai HTTP answer at {ip}:{PORTS['http']} (pandar.cgi)")
     return info
 
@@ -809,6 +818,13 @@ def set_ptp_http(run: Run, wanted: dict) -> None:
         for key in ("transport", "domain"):
             run.cannot(f"ptp.{key}", "this sensor's lidar_config does not show its PTP configuration in a shape this tool knows; it was not written")
         wanted = {"clock_source": wanted["clock_source"]}
+    if state["ptp"]["clock_source"] is None:
+        run.cannot("ptp.clock_source", "this sensor's lidar_config shows no ClockSource; it was not written")
+        del wanted["clock_source"]
+    if not wanted:
+        run.out["before"], run.out["unsupported"] = public(state), [
+            {"setting": "ptp", "reason": "this sensor's lidar_config shows neither a clock source nor a PTP configuration this tool knows"}]
+        raise Stop("unsupported", "the PTP settings of this sensor cannot be set by this tool; nothing was sent")
     changed = settle(run, "ptp", wanted, state)
     writer = Writer(run)
     if "ptp.clock_source" in changed:

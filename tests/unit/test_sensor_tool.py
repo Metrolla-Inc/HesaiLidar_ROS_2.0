@@ -341,6 +341,23 @@ def test_set_net_on_an_http_sensor_uses_one_ptc_session(live):
         assert answer["after"]["net"]["ip"] == B and answer["after"]["channel"] == "http+ptc"
 
 
+def test_a_model_known_to_answer_http_is_never_read_over_ptc_instead():
+    """An XT32 whose web server does not answer is "no answer", not a reason for a PTC session."""
+    with FakeHesai(http=False) as fake:
+        for command, values in (("probe", []), ("get-net", []), ("set-ptp", PTP)):
+            run(fake, command, "--ip", A, "--model", "PandarXT-32", *values, "--driver-stopped", expect="no-answer")
+        run(fake, "probe", "--ip", A, "--model", "PandarXT-32", "--driver-stopped", "--channel", "ptc", expect="refused")
+        assert fake.ptc_sessions == 0 and fake.codes == []
+        run(fake, "probe", "--ip", A, "--model", "AT128E2X", "--driver-stopped", expect="reported")  # any other model: PTC
+
+
+def test_ptp_settings_the_sensor_does_not_show_are_unsupported():
+    with FakeHesai(http=True, http_ptp=False, http_clock=False) as fake:
+        answer, status = run(fake, "set-ptp", "--ip", A, *PTP, "--driver-stopped", expect="unsupported")
+        assert status == 3 and answer["unsupported"][0]["setting"] == "ptp" and answer["changed"] == []
+        assert not [q for q in fake.queries if "action=set" in q] and fake.ptc_sessions == 0
+
+
 def test_channel_http_refuses_what_needs_ptc():
     with FakeHesai(http=True) as fake:
         for command in ("set-net", "set-dest"):
