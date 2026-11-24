@@ -280,6 +280,37 @@ class Run:
             raise Stop("refused", f"{what} needs --driver-stopped: the driver's own connection to the sensor must be closed first; nothing was sent")
 
 
+def public(state):
+    """`state` without the tool's own notes (keys that start with '_')."""
+    if state is None:
+        return None
+    return {key: ({k: v for k, v in value.items() if not k.startswith("_")} if isinstance(value, dict) else value)
+            for key, value in state.items()}
+
+
+def settle(run: Run, step: str, wanted: dict, state: dict) -> list:
+    """Note what is wanted and what differs. Ends the run when nothing differs, or on a dry run."""
+    out = run.out
+    out["before"], out["wanted"] = public(state), {step: wanted}
+    out["changed"] = differing(step, wanted, state[step])
+    if not out["changed"]:
+        out["after"], out["verified"], out["answers_at"] = public(state), True, run.args.ip
+        raise Stop("unchanged", f"{step} is already as asked; nothing was sent")
+    if run.args.dry_run:
+        raise Stop("changes", f"would change {', '.join(out['changed'])}")
+    return out["changed"]
+
+
+def finish(run: Run, step: str, wanted: dict, state, good: bool, at) -> None:
+    out = run.out
+    out["after"], out["verified"], out["answers_at"] = public(state), good, at
+    if good:
+        raise Stop("set", f"{', '.join(out['changed'])} set and read back")
+    still = differing(step, wanted, state[step]) if state else out["changed"]
+    raise Stop("unverified", f"the change was sent, and the sensor did not answer with the new values within "
+               f"{run.args.verify_timeout:g} s (still different: {', '.join(still)})")
+
+
 def run_tool(argv, vendor: str, sessions: Sessions, handlers: dict, extra=None, stdout=None) -> int:
     """Parse, run one command, print the one JSON object, return the exit status."""
     out = blank(vendor)
@@ -627,14 +658,6 @@ def ptc_ptp(run: Run, session: Ptc, state: dict, config: dict) -> None:
         pass  # the status is extra
 
 
-def public(state):
-    """`state` without the tool's own notes (keys that start with '_')."""
-    if state is None:
-        return None
-    return {key: ({k: v for k, v in value.items() if not k.startswith("_")} if isinstance(value, dict) else value)
-            for key, value in state.items()}
-
-
 def http_info(run: Run, ip: str):
     """device_info when the sensor has the HTTP interface and the run may use it, else None."""
     known = run.args.model in HTTP_MODELS
@@ -706,29 +729,6 @@ def get_net(run: Run) -> None:
 
 
 # ---- Hesai: the set commands ---------------------------------------------------------------------
-
-
-def settle(run: Run, step: str, wanted: dict, state: dict) -> list:
-    """Note what is wanted and what differs. Ends the run when nothing differs, or on a dry run."""
-    out = run.out
-    out["before"], out["wanted"] = public(state), {step: wanted}
-    out["changed"] = differing(step, wanted, state[step])
-    if not out["changed"]:
-        out["after"], out["verified"], out["answers_at"] = public(state), True, run.args.ip
-        raise Stop("unchanged", f"{step} is already as asked; nothing was sent")
-    if run.args.dry_run:
-        raise Stop("changes", f"would change {', '.join(out['changed'])}")
-    return out["changed"]
-
-
-def finish(run: Run, step: str, wanted: dict, state, good: bool, at) -> None:
-    out = run.out
-    out["after"], out["verified"], out["answers_at"] = public(state), good, at
-    if good:
-        raise Stop("set", f"{', '.join(out['changed'])} set and read back")
-    still = differing(step, wanted, state[step]) if state else out["changed"]
-    raise Stop("unverified", f"the change was sent, and the sensor did not answer with the new values within "
-               f"{run.args.verify_timeout:g} s (still different: {', '.join(still)})")
 
 
 def set_dest(run: Run) -> None:
