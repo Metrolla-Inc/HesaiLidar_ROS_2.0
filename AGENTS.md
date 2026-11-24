@@ -14,6 +14,7 @@ image **`ghcr.io/metrolla-inc/hesai_driver:<tag>`** (balena-fleets `DRIVER_VERSI
 | `config/<model>.yaml` | Metrolla | one configuration per sensor model; `config.yaml` is what the legacy node reads |
 | `Dockerfile`, `entrypoint.sh` | Metrolla | the image; `entrypoint.sh` is the v1.0.5 entrypoint plus the opt-in block |
 | `docker/` | Metrolla | the environment contract (`hesai_env.py`, `contract-entrypoint.sh`) and the smoke test |
+| `docker/sensor_tool.py` | Metrolla | `sensor-tool`: reads and sets the sensor's own address, destination and clock source (below) |
 | `tests/`, `pytest.ini`, `.github/workflows/` | Metrolla | the three CI tiers (`TESTING.md`) and the image release |
 
 ## Two modes, one image
@@ -154,6 +155,47 @@ A metrolla-edge driver template would pass:
       TIME_MODE: ptp
       ROS_LOCALHOST_ONLY: 1
 ```
+
+## sensor-tool: the sensor's own settings
+
+`docker/sensor_tool.py` is installed as `/usr/local/bin/sensor-tool`. The driver never runs it.
+The host does (`metrolla-hostd`, verb `sensor.program`; metrolla-edge `docs/sensor-program.md`
+has the interface, version 1, and the job around it), in its own container with
+`--entrypoint sensor-tool`, the host's network, and this sensor's driver stopped for anything that
+needs PTC.
+
+```
+sensor-tool probe|get-net --ip A [--driver-stopped]
+sensor-tool set-net  --ip A --new-ip B --netmask M --gateway G [--no-reboot] [--dry-run] --driver-stopped
+sensor-tool set-dest --ip A --dest-ip H --data-port P [--dry-run] --driver-stopped
+sensor-tool set-ptp  --ip A --transport L2|UDPv4 --domain N --delay-mechanism E2E|P2P --timescale UTC|TAI [--dry-run] --driver-stopped
+```
+
+One JSON object per run; exit 0 reported/set/unchanged, 2 a dry run that would change, 1
+refused/failed/no answer, 3 unsupported, 5 a change sent and not read back.
+
+| | A sensor that answers `pandar.cgi` (the XT32 class) | Any other (AT128, JT) |
+|---|---|---|
+| identity, destination, clock and PTP settings | HTTP, driver running | PTC, driver stopped |
+| netmask, gateway | one PTC session, driver stopped | PTC |
+| `set-ptp` | HTTP only: `clock_source`, `ptp_configuration` | PTC 0x1f, 0x24 |
+| `set-dest`, `set-net` | one PTC session (0x20, 0x21; restart 0x10 only if the address is not taken live) | the same |
+
+- **Never two PTC sessions.** Extra PTC sessions dropped an XT32's Ethernet link in the fleet.
+  The tool opens one at a time, waits for the sensor's side to close before the next, and on an
+  HTTP sensor opens at most one per run. Every PTC session and every write needs
+  `--driver-stopped`.
+- Reading and writing are separate code (`Ptc.read` / `http_get` against `Writer`); the factory
+  reset (0x25) and the firmware upgrade (0x83) are in `PTC_NEVER` and cannot be sent.
+- No HTTP key for the address or the destination is in any source, so none is tried.
+- The sources of every code and key are in the module's text. `--channel ptc|http` forces one
+  channel for a bench check; the host never passes it.
+- **Not run against a real sensor yet.** What `lidar_config` holds on a real XT32 beyond
+  `ClockSource`, `PTPStatus`, `PTPProfile` and `PTPConfig` is taken from second-hand sources; a
+  read-only `get-net` on the bench shows it (`http_keys`, `ptp.raw`).
+
+Tests: `tests/unit/test_sensor_tool.py`, against `tests/unit/fake_hesai_sensor.py` (a PTC server
+and the HTTP interface on loopback).
 
 ## Image and release
 
