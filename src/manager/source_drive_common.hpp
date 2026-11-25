@@ -22,6 +22,9 @@ public:
             YamlRead<uint16_t>(   driver_config["lidar_udp_type"], "ptc_port",                driver_param.input_param.ptc_port, 9347);
             YamlRead<std::string>(driver_config["lidar_udp_type"], "multicast_ip_address",    driver_param.input_param.multicast_ip_address, "");
             YamlRead<bool>(       driver_config["lidar_udp_type"], "use_ptc_connected",       driver_param.input_param.use_ptc_connected, true);
+            // How long to wait for the sensor's PTC port (seconds); after it the SDK loads the correction
+            // and firetimes files and publishes anyway. Below 0 (the default) waits forever, as before.
+            YamlRead<float>(      driver_config["lidar_udp_type"], "ptc_connect_timeout",     driver_param.input_param.ptc_connect_timeout, -1);
             YamlRead<std::string>(driver_config["lidar_udp_type"], "correction_file_path",    driver_param.input_param.correction_file_path, "");
             YamlRead<std::string>(driver_config["lidar_udp_type"], "firetimes_path",          driver_param.input_param.firetimes_path, "");
             YamlRead<bool>(       driver_config["lidar_udp_type"], "use_someip",              driver_param.input_param.use_someip, false);

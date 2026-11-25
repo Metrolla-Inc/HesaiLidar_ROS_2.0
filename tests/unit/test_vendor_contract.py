@@ -34,6 +34,16 @@ def test_every_key_the_contract_sets_is_read_by_the_driver():
             "ros_send_imu_topic", "ros_send_packet_loss_topic", "send_point_cloud_ros"} <= yaml_reads('config["ros"]')
 
 
+def test_the_driver_reads_a_bounded_ptc_connect_timeout():
+    """With use_ptc_connected true the node waited for the sensor's PTC port for ever: the SDK's
+    InputParam.ptc_connect_timeout (seconds; below 0 for ever) was never read from config.yaml, so a
+    sensor that streams but does not answer PTC gave a running driver and no clouds (found by
+    metrolla-edge's C16 replay). It is read now, beside use_ptc_connected, with the SDK's default."""
+    assert "ptc_connect_timeout" in yaml_reads('driver_config["lidar_udp_type"]')
+    assert re.search(r'YamlRead<float>\(\s*driver_config\["lidar_udp_type"\],\s*"ptc_connect_timeout",\s*'
+                     r'driver_param\.input_param\.ptc_connect_timeout,\s*-1\)', YAML_READER)
+
+
 def test_the_udp_block_is_read_only_for_source_type_1():
     assert re.search(r"if \(source_type == 1\) \{\s*YamlRead<std::string>\(driver_config\[\"lidar_udp_type\"\], \"device_ip_address\"",
                      YAML_READER)
